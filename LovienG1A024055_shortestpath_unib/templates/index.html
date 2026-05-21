@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Navigasi Dijkstra UNIB</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0F52BA;
+            --primary-hover: #0b3d8c;
+            --soft-bg: #eef2f9;
+            --white-glass: rgba(255, 255, 255, 0.85);
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #d2e4ff 0%, #ffffff 100%);
+            min-height: 100vh;
+            color: #333;
+            padding: 30px;
+        }
+
+        .glass-wrapper {
+            background: var(--white-glass);
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(15, 82, 186, 0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 1);
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            overflow: hidden;
+        }
+
+        .sidebar {
+            padding: 30px;
+            background: rgba(240, 244, 250, 0.6);
+            border-right: 1px solid rgba(15, 82, 186, 0.1);
+        }
+
+        .header-title {
+            color: var(--primary);
+            margin-top: 0;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .form-group { margin-bottom: 20px; }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            color: #444;
+        }
+
+        select, input[type="time"] {
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid #cdd7e5;
+            background: white;
+            font-size: 14px;
+            outline: none;
+            box-sizing: border-box;
+            transition: 0.3s;
+            font-family: inherit;
+        }
+
+        select:focus, input[type="time"]:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(15, 82, 186, 0.1);
+        }
+
+        .waktu-box {
+            background: rgba(15, 82, 186, 0.05);
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px dashed rgba(15, 82, 186, 0.3);
+            margin-bottom: 20px;
+            display: none; /* Disembunyikan secara default */
+        }
+
+        button.btn-submit {
+            width: 100%;
+            padding: 14px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        button.btn-submit:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(15, 82, 186, 0.3);
+        }
+
+        .route-options { margin-top: 25px; }
+        
+        .route-card {
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #eee;
+            border-left: 6px solid #ccc;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+            transition: 0.3s;
+        }
+
+        .route-card:hover {
+            transform: scale(1.02);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+        }
+
+        .route-card h4 {
+            margin: 0 0 8px 0;
+            font-size: 15px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .route-metrics {
+            display: flex;
+            gap: 15px;
+            font-size: 14px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        .badge {
+            background: #ffe3e3;
+            color: #E63946;
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .map-area {
+            position: relative;
+            background: white;
+            min-height: 600px;
+        }
+
+        .map-placeholder {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #888;
+            background: #fdfdfd;
+        }
+
+        .map-placeholder i { font-size: 50px; color: #d0d7e5; margin-bottom: 15px; }
+        
+        iframe { width: 100%; height: 100%; border: none; min-height: 600px;}
+
+        .alert {
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .alert-error { background: #ffebee; color: #c62828; border-left: 4px solid #c62828; }
+        .alert-info { background: #e3f2fd; color: #1565c0; border-left: 4px solid #1565c0; }
+
+        @media (max-width: 800px) {
+            .glass-wrapper { grid-template-columns: 1fr; }
+            .map-area { height: 400px; min-height: 400px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="glass-wrapper">
+        <div class="sidebar">
+            <h2 class="header-title"><i class="fa-solid fa-route"></i> UNIB Navigation</h2>
+            
+            {% if pesan_error %}
+            <div class="alert alert-error"><i class="fa-solid fa-triangle-exclamation"></i> {{ pesan_error }}</div>
+            {% endif %}
+
+            {% if pesan_info %}
+            <div class="alert alert-info"><i class="fa-solid fa-circle-info"></i> {{ pesan_info }}</div>
+            {% endif %}
+
+            <form method="POST">
+                
+                <div class="form-group">
+                    <label><i class="fa-solid fa-motorcycle"></i> Mode Transportasi</label>
+                    <select name="mode_transport" required>
+                        <option value="driving-car">🚗 Mobil (Mencari aspal besar)</option>
+                        <option value="motorcycle" selected>🏍️ Sepeda Motor (Bisa masuk gang/portal)</option>
+                        <option value="foot-walking">🚶 Pejalan Kaki (Menembus semua rute)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fa-solid fa-clock"></i> Deteksi Waktu</label>
+                    <select name="mode_waktu" id="mode_waktu" onchange="toggleManualTime()" required>
+                        <option value="asli" selected>Gunakan Waktu Asli (Saat Ini)</option>
+                        <option value="manual">Simulasi Waktu Manual</option>
+                    </select>
+                </div>
+
+                <div class="waktu-box" id="kotak_manual">
+                    <div class="form-group">
+                        <label>Simulasi Hari</label>
+                        <select name="sim_hari">
+                            <option value="kerja">Hari Kerja (Senin - Jumat)</option>
+                            <option value="libur">Akhir Pekan (Sabtu - Minggu)</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label>Jam Simulasi</label>
+                        <input type="time" name="sim_jam" value="12:00">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label><i class="fa-regular fa-circle-dot"></i> Titik Awal</label>
+                    <select name="lokasi_awal" required>
+                        <option value="" disabled selected>Pilih lokasi awal...</option>
+                        {% for lokasi in lokasi_list %}
+                            <option value="{{ lokasi }}">{{ lokasi }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fa-solid fa-location-dot"></i> Tujuan Akhir</label>
+                    <select name="lokasi_tujuan" required>
+                        <option value="" disabled selected>Pilih tujuan akhir...</option>
+                        {% for lokasi in lokasi_list %}
+                            <option value="{{ lokasi }}">{{ lokasi }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <button type="submit" class="btn-submit"><i class="fa-solid fa-magnifying-glass-location"></i> Cari 3 Opsi Rute</button>
+            </form>
+
+            {% if routes_info %}
+            <div class="route-options">
+                <h4 style="color: var(--primary); margin-bottom: 15px;"><i class="fa-solid fa-list-check"></i> Hasil Analisis Dijkstra:</h4>
+                
+                {% for route in routes_info %}
+                <div class="route-card" style="border-left-color: {{ route.warna }};">
+                    <h4 style="color: {{ route.warna }}">
+                        {{ "Jalur Utama" if route.is_utama else "Jalur Alternatif " ~ (loop.index - 1) }}
+                        {% if route.is_utama %}<span class="badge">Rekomendasi</span>{% endif %}
+                    </h4>
+                    <div class="route-metrics">
+                        <span><i class="fa-solid fa-road"></i> {{ route.jarak }} km</span>
+                        <span><i class="fa-solid fa-stopwatch"></i> {{ route.waktu }} menit</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            
+        </div>
+
+        <div class="map-area">
+            {% if peta_html %}
+                {{ peta_html | safe }}
+            {% else %}
+                <div class="map-placeholder">
+                    <i class="fa-regular fa-map"></i>
+                    <h2>Peta Belum Dimuat</h2>
+                    <p>Silakan pilih titik awal dan tujuan untuk melihat visualisasi rute.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        function toggleManualTime() {
+            var mode = document.getElementById("mode_waktu").value;
+            var kotak = document.getElementById("kotak_manual");
+            if (mode === "manual") {
+                kotak.style.display = "block";
+            } else {
+                kotak.style.display = "none";
+            }
+        }
+    </script>
+</body>
+</html>
