@@ -1,6 +1,6 @@
 # Shortest Path Universitas Bengkulu – Artificial Intellegent
 
-Halo Saya Lovien Najla Dhafiyah, mahasiswi Universitas Bengkulu Program Studi Informatika Angkatan 2024 dengan NPM G1A024055. Project ini dibuat sebagai bagian dari pemenuhan tugas UTS dan UAS mata kuliah Artificial Intellegent. Project ini merupakan sistem pencarian jalur tercepat (Shortest Path) di lingkungan Universitas Bengkulu dengan menggunakan algoritma Dijkstar. Sistem dapat membantu pengguna menentukan rute tercepat antar lokasi kampus secara interaktif menggunakan peta digital.
+Halo Saya Lovien Najla Dhafiyah, mahasiswi Universitas Bengkulu Program Studi Informatika Angkatan 2024 dengan NPM G1A024055. Project ini dibuat sebagai bagian dari pemenuhan tugas UTS dan UAS mata kuliah Artificial Intellegent. Project ini merupakan sistem pencarian jalur tercepat (Shortest Path) di lingkungan Universitas Bengkulu dengan menggunakan algoritma Dijkstar. Sistem dapat membantu pengguna menentukan rute tercepat antar lokasi kampus secara interaktif menggunakan peta digital. Selain itu, saya juga telah mempresentasikan project saya ke dalam sebuah vidio di Instagram, berikut link terkait https://www.instagram.com/reel/DYuHACss8iT/?igsh=Y2hjdTNwajA5OGV0
 
 ---
 
